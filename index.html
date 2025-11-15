@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZSC游戏中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(76, 201, 240, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #a0a0c0;
+            margin-bottom: 15px;
+        }
+        
+        .games-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        
+        .game-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-header {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .game-title {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .game-icon {
+            width: 35px;
+            height: 35px;
+            margin-right: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        
+        .workbench-icon {
+            background: linear-gradient(45deg, #8bc34a, #4caf50);
+        }
+        
+        .gomoku-icon {
+            background: linear-gradient(45deg, #f44336, #e91e63);
+        }
+        
+        .game-description {
+            color: #b0b0d0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .game-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 200px;
+        }
+        
+        .game-features {
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        
+        .feature-list {
+            list-style-type: none;
+        }
+        
+        .feature-list li {
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            color: #4cc9f0;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .game-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: auto;
+        }
+        
+        .game-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.5);
+            background: linear-gradient(45deg, #3a0ca3, #4361ee);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+            color: #a0a0c0;
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+        
+        .game-preview {
+            height: 120px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .preview-workbench {
+            background: linear-gradient(45deg, #2d5a27, #3a7c33);
+        }
+        
+        .preview-gomoku {
+            background: linear-gradient(45deg, #3a0ca3, #4cc9f0);
+        }
+        
+        .preview-content {
+            font-size: 3rem;
+            opacity: 0.7;
+        }
+        
+        .workbench-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .gomoku-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        .workbench-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .workbench-screenshot {
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.ibb.co/gZjwSDSV/u-2620281482-905246973-fm-253-fmt-auto-app-138-f-JPEG.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+        }
+        
+        /* 平板和桌面样式 */
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            header {
+                padding: 20px;
+                margin-bottom: 40px;
+                border-radius: 15px;
+            }
+            
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .games-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+                margin-bottom: 40px;
+            }
+            
+            .game-card {
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            }
+            
+            .game-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            }
+            
+            .game-header {
+                padding: 20px;
+            }
+            
+            .game-title {
+                font-size: 1.8rem;
+            }
+            
+            .game-icon {
+                width: 40px;
+                height: 40px;
+                margin-right: 15px;
+                font-size: 1.5rem;
+            }
+            
+            .game-description {
+                font-size: 1rem;
+            }
+            
+            .game-content {
+                padding: 25px;
+                min-height: 250px;
+            }
+            
+            .game-features {
+                margin-bottom: 20px;
+            }
+            
+            .feature-list li {
+                padding: 8px 0;
+                font-size: 1rem;
+            }
+            
+            .game-button {
+                padding: 12px 25px;
+                font-size: 1.1rem;
+                box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+            }
+            
+            .game-button:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(67, 97, 238, 0.6);
+            }
+            
+            footer {
+                padding: 20px;
+                margin-top: 30px;
+                font-size: 0.9rem;
+            }
+            
+            .game-preview {
+                height: 150px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .preview-content {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ZSC游戏中心</h1>
+            <p class="subtitle">精选游戏合集 - 创意与策略的完美结合</p>
+        </header>
+        
+        <div class="games-grid">
+            <!-- 工作台模拟器游戏卡片 -->
+            <div class="game-card">
+                <div class="game-header">
+                    <h2 class="game-title">
+                        <span class="game-icon workbench-icon">Z</span>
+                        ZSC工作台模拟器
+                    </h2>
+                    <p class="game-description">我的世界风格的工作台合成模拟器 - 测试版本</p>
+                </div>
+                
+                <div class="game-content">
+                    <div class="game-preview preview-workbench">
+                        <div class="workbench-screenshot"></div>
+                    </div>
+                    
+                    <div class="game-features">
+                        <ul class="feature-list">
+                            <li>3×3工作台合成系统</li>
+                            <li>完整的物品栏与配方库</li>
+                            <li>拖拽式物品移动操作</li>
+                            <li>100+种合成配方</li>
+                        </ul>
+                    </div>
+                    
+                    <a href="https://zsc41888.github.io/ZSCgzt/" class="game-button" id="workbench-btn" target="_blank">开始游戏</a>
+                </div>
+            </div>
+            
+            <!-- 五子棋游戏卡片 -->
+            <div class="game-card">
+                <div class="game-header">
+                    <h2 class="game-title">
+                        <span class="game-icon gomoku-icon">Z</span>
+                        ZSC 3D五子棋
+                    </h2>
+                    <p class="game-description">AI对战五子棋 - 挑战智能算法</p>
+                </div>
+                
+                <div class="game-content">
+                    <div class="game-preview preview-gomoku">
+                        <div class="gomoku-pattern"></div>
+                        <div class="preview-content">⚫⚫⚫⚪⚪⚪</div>
+                    </div>
+                    
+                    <div class="game-features">
+                        <ul class="feature-list">
+                            <li>智能AI对手</li>
+                            <li>3D视觉效果</li>
+                            <li>缩放与视角调整</li>
+                            <li>胜负判定与提示系统</li>
+                        </ul>
+                    </div>
+                    
+                    <a href="https://zsc41888.github.io/zscqi/" class="game-button" id="gomoku-btn" target="_blank">开始游戏</a>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 ZSC游戏工作室 | 所有游戏仅供娱乐使用</p>
+        </footer>
+    </div>
+
+    <script>
+        // 添加一些简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const gameCards = document.querySelectorAll('.game-card');
+            
+            gameCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // 按钮点击效果
+            const buttons = document.querySelectorAll('.game-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+            
+            // 触摸设备优化
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+                
+                // 移除鼠标悬停效果
+                gameCards.forEach(card => {
+                    card.addEventListener('touchstart', function() {
+                        this.style.transform = 'translateY(-5px)';
+                    });
+                    
+                    card.addEventListener('touchend', function() {
+                        setTimeout(() => {
+                            this.style.transform = 'translateY(0)';
+                        }, 200);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
