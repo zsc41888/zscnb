@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZSC科技 - 创新项目中心</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary: #4cc9f0;
+            --secondary: #4361ee;
+            --accent: #3a0ca3;
+            --dark: #0f172a;
+            --darker: #0a0f1c;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* 加载动画 */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--darker);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+        }
+        
+        .loading-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .logo-loader {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo-loader-text {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            animation: textReveal 1.5s ease-out forwards;
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+        }
+        
+        .logo-loader-divider {
+            display: inline-block;
+            margin: 0 15px;
+            font-size: 4rem;
+            background: linear-gradient(45deg, #f44336, #e91e63);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: dividerAnim 1.5s 0.5s ease-out forwards;
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        .loader-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loader-progress {
+            position: absolute;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            animation: loadingProgress 2s ease-in-out forwards;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--card-border);
+            transform: translateY(-100%);
+            animation: slideDown 0.8s 0.5s forwards;
+        }
+        
+        .nav-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .nav-link:hover:after {
+            width: 100%;
+        }
+        
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 100px 20px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(76, 201, 240, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(67, 97, 238, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(58, 12, 163, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s 0.8s forwards;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--secondary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.6);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* 项目区域 */
+        .section {
+            padding: 100px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+        
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .project-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .project-header {
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .project-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .project-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+        }
+        
+        .project-description {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        
+        .project-content {
+            padding: 25px;
+        }
+        
+        .project-preview {
+            height: 200px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .project-card:hover .preview-image {
+            transform: scale(1.05);
+        }
+        
+        .emoji-preview {
+            font-size: 80px;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .project-features {
+            margin-bottom: 20px;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+        
+        .feature-list li:before {
+            content: "▸▸▸▸▸▸▸▸";
+            color: var(--primary);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .project-button {
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        /* 关于我们区域 */
+        .about {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 60px;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .about-content {
+            max-width: 800px;
+        }
+        
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 40px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 60px 0 30px;
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .footer-link {
+            color: var(--gray);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-link:hover {
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--card-border);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: var(--dark);
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid var(--card-border);
+        }
+        
+        /* 动画定义 */
+        @keyframes textReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        @keyframes dividerAnim {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            70% {
+                opacity: 1;
+                transform: scale(1.2) rotate(180deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(360deg);
+            }
+        }
+        
+        @keyframes loadingProgress {
+            0% {
+                width: 0%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+        
+        @keyframes slideDown {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem 5%;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: var(--dark);
+                flex-direction: column;
+                align-items: center;
+                padding: 2rem 0;
+                gap: 1.5rem;
+                transform: translateY(-100%);
+                transition: var(--transition);
+                border-top: 1px solid var(--card-border);
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+            }
+            
+            .nav-toggle {
+                display: block;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .about {
+                padding: 40px 20px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+                text-align: center;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .emoji-preview {
+                font-size: 60px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .project-card {
+                margin: 0 -10px;
+            }
+            
+            .project-content {
+                padding: 20px;
+            }
+            
+            .emoji-preview {
+                font-size: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="logo-loader">
+            <span class="logo-loader-text">ZSC</span>
+            <span class="logo-loader-divider">丨</span>
+            <span class="logo-loader-text">科技</span>
+        </div>
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="#" class="nav-logo">ZSC科技</a>
+        <button class="nav-toggle" id="navToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links" id="navLinks">
+            <a href="#home" class="nav-link">首页</a>
+            <a href="#projects" class="nav-link">项目</a>
+            <a href="#about" class="nav-link">关于我们</a>
+            <a href="#contact" class="nav-link">ZSC官网</a>
+        </div>
+    </nav>
+    
+    <!-- 首页英雄区域 -->
+    <section class="hero" id="home">
+        <div class="hero-bg"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">创新驱动未来，技术改变世界</h1>
+                <p class="hero-subtitle">ZSC科技致力于开发前沿的互动项目，将创意与技术完美结合，为用户提供卓越的数字体验。</p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> 探索项目
+                    </a>
+                    <a href="#about" class="btn btn-secondary">
+                        <i class="fas fa-info-circle"></i> 了解更多
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 项目展示区域 -->
+    <section class="section" id="projects">
+        <div class="container">
+            <h2 class="section-title">精选项目</h2>
+            <div class="projects-grid">
+                <!-- 工作台模拟器项目 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3 class="project-title">
+                            <span class="project-icon">
+                                <i class="fas fa-cube"></i>
+                            </span>
+                            ZSC工作台模拟器
+                        </h3>
+                        <p class="project-description">我的世界风格的工作台合成模拟器 - 测试版本</p>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-https://i.ibb.co/gZjwSDSV/u-2620281482-905246973-fm-253-fmt-auto-app-138-f-JPEG.jpg">
+                            
+                        </div>
+                        <div class="project-features">
+                            <ul class="feature-list">
+                                <li>3×3工作台合成系统</li>
+                                <li>完整的物品栏与配方库</li>
+                                <li>拖拽式物品移动操作</li>
+                                <li>100+种合成配方</li>
+                            </ul>
+                        </div>
+                        <div class="project-button">
+                            <a href="https://zsc41888.github.io/ZSCgzt/" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> 进入项目
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 五子棋项目 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3 class="project-title">
+                            <span class="project-icon">
+                                <i class="fas fa-chess-board"></i>
+                            </span>
+                            ZSC 3D五子棋
+                        </h3>
+                        <p class="project-description">AI对战五子棋 - 挑战智能算法</p>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-preview">
+                            <div class="emoji-preview">
+                                <span>⚫</span>
+                                <span>⚪</span>
+                            </div>
+                        </div>
+                        <div class="project-features">
+                            <ul class="feature-list">
+                                <li>智能AI对手</li>
+                                <li>3D视觉效果</li>
+                                <li>缩放与视角调整</li>
+                                <li>胜负判定与提示系统</li>
+                            </ul>
+                        </div>
+                        <div class="project-button">
+                            <a href="https://zsc41888.github.io/zscqi/" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> 进入项目
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- QQ群卡片 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3 class="project-title">
+                            <span class="project-icon">
+                                <i class="fas fa-users"></i>
+                            </span>
+                            ZSC科技交流群
+                        </h3>
+                        <p class="project-description">加入我们的社群，获取最新动态和技术交流</p>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-preview">
+                            <div class="emoji-preview">
+                                <span>🥳</span>
+                                <span>💬</span>
+                                <span>🔥</span>
+                            </div>
+                        </div>
+                        <div class="project-features">
+                            <ul class="feature-list">
+                                <li>与开发者直接交流</li>
+                                <li>获取项目最新动态</li>
+                                <li>技术问题讨论与解答</li>
+                                <li>抢先体验新功能</li>
+                            </ul>
+                        </div>
+                        <div class="project-button">
+                            <a href="#" class="btn btn-primary" id="joinGroupBtn">
+                                <i class="fas fa-user-plus"></i> 加入QQ群
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 关于我们区域 -->
+    <section class="section" id="about">
+        <div class="container">
+            <h2 class="section-title">关于ZSC科技</h2>
+            <div class="about">
+                <div class="about-content">
+                    <p class="about-text">ZSC科技工作室成立于2025年，专注于开发创新性的互动项目和应用。致力于将前沿技术与用户体验完美结合。</p>
+                    <p class="about-text">我们相信技术应该服务于人，通过创造性的解决方案，让复杂的技术变得简单易用，为人们的生活和工作带来便利与乐趣。</p>
+                    
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-number">2+</div>
+                            <div class="stat-label">项目上线</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">1000+</div>
+                            <div class="stat-label">用户访问</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">ZSC独自</div>
+                            <div class="stat-label">团队成员</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">ZSC科技</div>
+                <div class="footer-links">
+                    <a href="#home" class="footer-link">首页</a>
+                    <a href="#projects" class="footer-link">项目</a>
+                    <a href="#about" class="footer-link">关于我们</a>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-qq"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2025 ZSC科技工作室 | 所有项目禁止盗用! (加入我的QQ交流群:1070356813)</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- QQ群加入模态框 -->
+    <div class="modal" id="groupModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px; color: var(--primary);">加入ZSC科技交流群</h3>
+            <p style="margin-bottom: 20px; color: var(--gray);">群号已复制到剪贴板！</p>
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <p style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">1070356813</p>
+            </div>
+            <p style="margin-bottom: 20px; color: var(--gray); font-size: 0.9rem;">请打开QQ，粘贴群号并申请加入</p>
+            <button id="closeModalBtn" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: 600;">确定</button>
+        </div>
+    </div>
+    
+    <script>
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            
+            // 模拟加载进度
+            setTimeout(() => {
+                loadingScreen.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 800);
+            }, 2000);
+            
+            // 导航栏切换
+            const navToggle = document.getElementById('navToggle');
+            const navLinks = document.getElementById('navLinks');
+            
+            navToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                navToggle.innerHTML = navLinks.classList.contains('active') ? 
+                    '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            });
+            
+            // 滚动动画
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            // 观察所有需要动画的元素
+            document.querySelectorAll('.section, .project-card').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // 平滑滚动到锚点
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // 关闭移动端菜单
+                        if (navLinks.classList.contains('active')) {
+                            navLinks.classList.remove('active');
+                            navToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                        }
+                        
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // 添加视差滚动效果
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const hero = document.querySelector('.hero');
+                const heroBg = document.querySelector('.hero-bg');
+                
+                if (heroBg) {
+                    heroBg.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+                
+                // 导航栏阴影效果
+                const navbar = document.querySelector('.navbar');
+                if (scrolled > 50) {
+                    navbar.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.2)';
+                } else {
+                    navbar.style.boxShadow = 'none';
+                }
+            });
+            
+            // QQ群加入功能
+            const joinGroupBtn = document.getElementById('joinGroupBtn');
+            const groupModal = document.getElementById('groupModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            
+            joinGroupBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 复制群号到剪贴板
+                const groupNumber = '1070356813';
+                navigator.clipboard.writeText(groupNumber).then(() => {
+                    // 显示模态框
+                    groupModal.style.display = 'flex';
+                }).catch(err => {
+                    // 如果复制失败，使用备用方法
+                    const textArea = document.createElement('textarea');
+                    textArea.value = groupNumber;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    // 显示模态框
+                    groupModal.style.display = 'flex';
+                });
+            });
+            
+            // 关闭模态框
+            closeModalBtn.addEventListener('click', function() {
+                groupModal.style.display = 'none';
+            });
+            
+            // 点击模态框背景关闭
+            groupModal.addEventListener('click', function(e) {
+                if (e.target === groupModal) {
+                    groupModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
