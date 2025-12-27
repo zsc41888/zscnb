@@ -1,0 +1,1991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZSC科技 | 创新驱动未来</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        /* 基础重置与变量定义 */
+        :root {
+            --primary-bg: #0a0a12;
+            --secondary-bg: rgba(18, 18, 31, 0.3);
+            --accent-color: #00e5ff;
+            --accent-hover: #00b8cc;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --card-bg: rgba(30, 30, 46, 0.2);
+            --card-border: rgba(100, 100, 255, 0.1);
+            --glow: 0 0 15px rgba(0, 229, 255, 0.5);
+            --transition-fast: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-slow: 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --gold-color: #ffd700;
+            --gold-glow: rgba(255, 215, 0, 0.3);
+            /* 微软风格配色：科技蓝、清透紫、极光绿 */
+            --color-1: #0078D4; /* Microsoft Blue */
+            --color-2: #8764B8; /* Fluent Purple */
+            --color-3: #00CC6A; /* Fluent Green */
+            --anim-duration: 4s;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* 防止入场动画期间滚动 */
+        body.no-scroll {
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        /* ===== 背景动画 - 放大版本 ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            opacity: 0.3;
+        }
+        
+        .bg-loader-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px; /* 从300px增大到500px */
+            height: 500px; /* 从300px增大到500px */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            filter: url('#goo');
+        }
+        
+        .bg-orb {
+            position: absolute;
+            width: 100px; /* 从60px增大到100px */
+            height: 100px; /* 从60px增大到100px */
+            border-radius: 50%;
+            mix-blend-mode: multiply;
+            opacity: 0.9;
+            filter: blur(12px); /* 增大模糊效果 */
+            animation: bg-orb-move var(--anim-duration) infinite cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        
+        .bg-orb:nth-child(1) {
+            background: var(--color-1);
+            animation-delay: 0s;
+        }
+        
+        .bg-orb:nth-child(2) {
+            background: var(--color-2);
+            animation-delay: -0.5s;
+        }
+        
+        .bg-orb:nth-child(3) {
+            background: var(--color-3);
+            animation-delay: -1s;
+        }
+        
+        /* 背景光点动画关键帧 - 调整移动距离以匹配新的大小 */
+        @keyframes bg-orb-move {
+            0% {
+                transform: rotate(0deg) translate(0, 0) scale(1);
+            }
+            25% {
+                transform: rotate(120deg) translate(140px, 0) scale(0.6); /* 从80px增大到140px */
+            }
+            50% {
+                transform: rotate(240deg) translate(0, 0) scale(1.4); 
+            }
+            75% {
+                transform: rotate(360deg) translate(-140px, 0) scale(0.6); /* 从-80px增大到-140px */
+            }
+            100% {
+                transform: rotate(480deg) translate(0, 0) scale(1);
+            }
+        }
+        
+        /* ===== 新的入场动画 ===== */
+        .entry-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-bg);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+        
+        .entry-animation.hidden {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+        
+        /* 容器 */
+        .loader-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            filter: url('#goo'); 
+        }
+        
+        /* 核心动画光点 */
+        .orb {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            mix-blend-mode: multiply;
+            opacity: 0.9;
+            filter: blur(8px);
+            animation: orb-move var(--anim-duration) infinite cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        
+        .orb:nth-child(1) {
+            background: var(--color-1);
+            animation-delay: 0s;
+        }
+        
+        .orb:nth-child(2) {
+            background: var(--color-2);
+            animation-delay: -0.5s;
+        }
+        
+        .orb:nth-child(3) {
+            background: var(--color-3);
+            animation-delay: -1s;
+        }
+        
+        /* 文字容器 */
+        .text-container {
+            position: absolute;
+            z-index: 10;
+            text-align: center;
+            opacity: 0;
+            animation: text-breathe var(--anim-duration) infinite cubic-bezier(0.65, 0, 0.35, 1);
+            pointer-events: none;
+        }
+        
+        .brand-name {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--color-1), var(--color-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .brand-sub {
+            font-size: 1rem;
+            color: #a0a0b0;
+            font-weight: 300;
+            margin-top: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+        
+        /* --- 动画关键帧 --- */
+        
+        /* 光点复杂的轨道运动 */
+        @keyframes orb-move {
+            0% {
+                transform: rotate(0deg) translate(0, 0) scale(1);
+            }
+            25% {
+                transform: rotate(120deg) translate(80px, 0) scale(0.6);
+            }
+            50% {
+                transform: rotate(240deg) translate(0, 0) scale(1.4); 
+            }
+            75% {
+                transform: rotate(360deg) translate(-80px, 0) scale(0.6);
+            }
+            100% {
+                transform: rotate(480deg) translate(0, 0) scale(1);
+            }
+        }
+        
+        /* 文字的显隐配合光点的聚集 */
+        @keyframes text-breathe {
+            0%, 20% {
+                opacity: 0;
+                transform: scale(0.9) translateY(10px);
+                filter: blur(10px);
+            }
+            45%, 55% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0px);
+            }
+            80%, 100% {
+                opacity: 0;
+                transform: scale(1.1) translateY(-10px);
+                filter: blur(5px);
+            }
+        }
+        
+        /* 背景装饰微动，增加氛围感 */
+        .bg-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(10, 10, 18, 1) 0%, rgba(5, 5, 10, 1) 100%);
+            z-index: -2;
+        }
+        
+        /* 进度指示器 */
+        .progress-container {
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 40px;
+            overflow: hidden;
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 1s forwards 1.5s;
+            z-index: 11;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--color-1), var(--color-2));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--color-1);
+        }
+        
+        /* 跳过按钮 */
+        .skip-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition-fast);
+            z-index: 12;
+        }
+        
+        .skip-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        /* ===== 入场动画结束 ===== */
+        
+        /* 网格背景 - 降低透明度 */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(18, 18, 31, 0.6) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(18, 18, 31, 0.6) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        /* 导航栏 - 降低毛玻璃模糊度 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(10, 10, 18, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s ease;
+        }
+        
+        .navbar.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--accent-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+        
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition-fast);
+            opacity: 0.8;
+        }
+        
+        .nav-link:hover {
+            opacity: 1;
+            color: var(--accent-color);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: var(--transition-fast);
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 英雄区域 - 降低毛玻璃模糊度 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 80px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        
+        .hero.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .hero-content {
+            max-width: 700px;
+            z-index: 2;
+            background: rgba(10, 10, 18, 0.25);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1.2rem;
+        }
+        
+        .btn {
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            box-shadow: var(--glow);
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 229, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        /* 项目展示区域 - 降低毛玻璃模糊度 */
+        .section {
+            padding: 100px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-title {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        /* 分类导航 - 降低毛玻璃模糊度 */
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .category-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            color: var(--text-secondary);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .category-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.1), transparent);
+            transition: var(--transition-fast);
+        }
+        
+        .category-btn:hover::before {
+            left: 100%;
+        }
+        
+        .category-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            border-color: var(--accent-color);
+        }
+        
+        .category-btn.active {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        /* 项目网格 */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 30px;
+        }
+        
+        /* 项目卡片 - 降低毛玻璃模糊度 */
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            transition: var(--transition-fast);
+            position: relative;
+            height: 400px;
+            perspective: 1000px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        
+        .project-card:hover .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .card-back {
+            transform: rotateY(180deg);
+            background: rgba(20, 20, 35, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backface-visibility: hidden;
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .project-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+        
+        .project-title {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .project-description {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        
+        .project-features {
+            text-align: left;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+        
+        .feature-list li::before {
+            content: "▸▸▸▸";
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        /* 赞助支持按钮区域 */
+        #sponsor-link {
+            padding: 80px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+            position: relative;
+            text-align: center;
+        }
+        
+        #sponsor-link.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 赞助支持按钮样式 */
+        .sponsor-btn {
+            background: linear-gradient(145deg, rgba(15, 15, 25, 0.95) 0%, rgba(8, 8, 18, 0.95) 100%);
+            border: 2px solid rgba(0, 229, 255, 0.5);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 229, 255, 0.15);
+            color: #00e5ff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 15px 40px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto;
+            transition: var(--transition-fast);
+            max-width: 300px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            z-index: 5;
+            text-decoration: none;
+        }
+        
+        .sponsor-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.2), transparent);
+            transition: var(--transition-fast);
+        }
+        
+        .sponsor-btn:hover::before {
+            left: 100%;
+        }
+        
+        .sponsor-btn:hover {
+            background: linear-gradient(145deg, rgba(20, 20, 30, 0.95) 0%, rgba(10, 10, 20, 0.95) 100%);
+            border-color: rgba(0, 229, 255, 0.7);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 229, 255, 0.2);
+            color: #b3ffec;
+        }
+        
+        /* 关于我们区域 - 降低毛玻璃模糊度 */
+        .about {
+            background: rgba(18, 18, 31, 0.3);
+            border-radius: 20px;
+            padding: 60px;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(0, 229, 255, 0.03), transparent);
+            opacity: 0;
+            transition: var(--transition-slow);
+        }
+        
+        .about:hover::before {
+            opacity: 1;
+        }
+        
+        .about-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 40px;
+        }
+        
+        .stat {
+            text-align: center;
+            transition: var(--transition-fast);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .stat:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--accent-color);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        /* 页脚 - 降低毛玻璃模糊度 */
+        footer {
+            background: rgba(5, 5, 10, 0.4);
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        footer.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .footer-logo span {
+            color: var(--accent-color);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+        
+        .footer-link:hover {
+            color: var(--accent-color);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-link {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition-fast);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .social-link:hover {
+            background: rgba(0, 229, 255, 0.2);
+            color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        /* ZSC科技毛玻璃面板 - 降低毛玻璃模糊度 */
+        .glass-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 18, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .glass-panel.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .glass-content {
+            background: rgba(30, 30, 46, 0.4);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .glass-panel.active .glass-content {
+            transform: translateY(0);
+        }
+        
+        .glass-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            background: rgba(255, 255, 255, 0.05);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .glass-close:hover {
+            color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-title {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            text-align: center;
+        }
+        
+        .glass-text {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        
+        .glass-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .glass-feature {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: var(--transition-fast);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .glass-feature:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .glass-feature i {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+        
+        .glass-feature h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .projects-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            }
+            
+            /* 背景动画响应式调整 */
+            .bg-loader-container {
+                width: 400px;
+                height: 400px;
+            }
+            
+            .bg-orb {
+                width: 80px;
+                height: 80px;
+            }
+            
+            @keyframes bg-orb-move {
+                0% {
+                    transform: rotate(0deg) translate(0, 0) scale(1);
+                }
+                25% {
+                    transform: rotate(120deg) translate(110px, 0) scale(0.6);
+                }
+                50% {
+                    transform: rotate(240deg) translate(0, 0) scale(1.4); 
+                }
+                75% {
+                    transform: rotate(360deg) translate(-110px, 0) scale(0.6);
+                }
+                100% {
+                    transform: rotate(480deg) translate(0, 0) scale(1);
+                }
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem 5%;
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: rgba(10, 10, 18, 0.95);
+                flex-direction: column;
+                align-items: center;
+                padding: 1.5rem 0;
+                gap: 1.5rem;
+                transform: translateY(-100%);
+                transition: var(--transition-fast);
+                backdrop-filter: blur(8px);
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+            }
+            
+            .nav-toggle {
+                display: block;
+            }
+            
+            .hero {
+                padding-top: 100px;
+                text-align: center;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sponsor-btn {
+                max-width: 250px;
+                font-size: 1.1rem;
+                padding: 12px 30px;
+            }
+            
+            .about {
+                padding: 40px 20px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+                text-align: center;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .glass-content {
+                padding: 30px 20px;
+            }
+            
+            .glass-features {
+                grid-template-columns: 1fr;
+            }
+            
+            /* 入场动画响应式调整 */
+            .loader-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .orb {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .brand-name {
+                font-size: 2rem;
+            }
+            
+            .brand-sub {
+                font-size: 0.9rem;
+            }
+            
+            /* 背景动画响应式调整 */
+            .bg-loader-container {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .bg-orb {
+                width: 70px;
+                height: 70px;
+            }
+            
+            @keyframes bg-orb-move {
+                0% {
+                    transform: rotate(0deg) translate(0, 0) scale(1);
+                }
+                25% {
+                    transform: rotate(120deg) translate(100px, 0) scale(0.6);
+                }
+                50% {
+                    transform: rotate(240deg) translate(0, 0) scale(1.4); 
+                }
+                75% {
+                    transform: rotate(360deg) translate(-100px, 0) scale(0.6);
+                }
+                100% {
+                    transform: rotate(480deg) translate(0, 0) scale(1);
+                }
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .project-card {
+                height: 360px;
+            }
+            
+            .sponsor-btn {
+                max-width: 220px;
+                font-size: 1rem;
+                padding: 10px 25px;
+            }
+            
+            .glass-title {
+                font-size: 1.8rem;
+            }
+            
+            /* 入场动画响应式调整 */
+            .loader-container {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .orb {
+                width: 40px;
+                height: 40px;
+            }
+            
+            @keyframes orb-move {
+                0% {
+                    transform: rotate(0deg) translate(0, 0) scale(1);
+                }
+                25% {
+                    transform: rotate(120deg) translate(60px, 0) scale(0.6);
+                }
+                50% {
+                    transform: rotate(240deg) translate(0, 0) scale(1.4); 
+                }
+                75% {
+                    transform: rotate(360deg) translate(-60px, 0) scale(0.6);
+                }
+                100% {
+                    transform: rotate(480deg) translate(0, 0) scale(1);
+                }
+            }
+            
+            .brand-name {
+                font-size: 1.8rem;
+            }
+            
+            .brand-sub {
+                font-size: 0.8rem;
+            }
+            
+            /* 背景动画响应式调整 */
+            .bg-loader-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .bg-orb {
+                width: 60px;
+                height: 60px;
+            }
+            
+            @keyframes bg-orb-move {
+                0% {
+                    transform: rotate(0deg) translate(0, 0) scale(1);
+                }
+                25% {
+                    transform: rotate(120deg) translate(80px, 0) scale(0.6);
+                }
+                50% {
+                    transform: rotate(240deg) translate(0, 0) scale(1.4); 
+                }
+                75% {
+                    transform: rotate(360deg) translate(-80px, 0) scale(0.6);
+                }
+                100% {
+                    transform: rotate(480deg) translate(0, 0) scale(1);
+                }
+            }
+        }
+    </style>
+</head>
+<body class="no-scroll">
+    <!-- SVG Filter for the "Gooey" liquid effect -->
+    <svg style="position: absolute; width:0; height:0;" aria-hidden="true">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+                <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- 背景动画 - 放大版本 -->
+    <div class="bg-animation">
+        <div class="bg-loader-container">
+            <div class="bg-orb"></div>
+            <div class="bg-orb"></div>
+            <div class="bg-orb"></div>
+        </div>
+    </div>
+    
+    <!-- 网格背景 -->
+    <div class="grid-bg"></div>
+    
+    <!-- 新的入场动画 -->
+    <div class="entry-animation" id="entryAnimation">
+        <div class="bg-gradient"></div>
+        
+        <!-- 动画主体 -->
+        <div class="loader-container">
+            <div class="orb"></div>
+            <div class="orb"></div>
+            <div class="orb"></div>
+        </div>
+
+        <!-- 文字层 -->
+        <div class="text-container">
+            <div class="brand-name">ZSC科技</div>
+            <div class="brand-sub">ZSC TECHNOLOGY</div>
+        </div>
+
+        <!-- 进度指示器 -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <!-- 跳过按钮 -->
+        <button class="skip-btn" id="skipBtn">跳过动画</button>
+    </div>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="logo">ZSC<span>科技</span></a>
+        <button class="nav-toggle" id="navToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links" id="navLinks">
+            <a href="#home" class="nav-link">首页</a>
+            <a href="#projects" class="nav-link">项目展示</a>
+            <a href="https://zsc41888.github.io/VIPzanzhu" class="nav-link" target="_blank">赞助支持</a>
+            <a href="#about" class="nav-link">关于我们</a>
+            <a href="#" class="nav-link" id="zscLink">ZSC科技</a>
+        </div>
+    </nav>
+    
+    <!-- 首页英雄区域 -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">创新驱动未来<br>技术改变世界</h1>
+                <p class="hero-subtitle">ZSC科技致力于开发前沿的互动项目，将创意与技术完美结合，为用户提供卓越的数字体验。</p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> 探索项目
+                    </a>
+                    <a href="#about" class="btn btn-secondary">
+                        <i class="fas fa-info-circle"></i> 了解更多
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 项目展示区域 -->
+    <section class="section" id="projects">
+        <div class="container">
+            <h2 class="section-title">精选项目</h2>
+            
+            <!-- 分类导航 -->
+            <div class="category-nav">
+                <button class="category-btn active" data-category="all">全部项目</button>
+                <button class="category-btn" data-category="games">游戏类</button>
+                <button class="category-btn" data-category="tools">工具类</button>
+                <button class="category-btn" data-category="community">社区类</button>
+            </div>
+            
+            <!-- 项目网格 -->
+            <div class="projects-grid">
+                <!-- 斗地主项目 -->
+                <div class="project-card" data-category="games">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="project-icon">
+                                <i class="fas fa-cards"></i>
+                            </div>
+                            <h3 class="project-title">ZSC 斗地主（测试版）</h3>
+                            <p class="project-description">AI斗地主游戏 - 挑战智能对手</p>
+                            <div class="btn btn-secondary">
+                                <i class="fas fa-rotate"></i> 翻转查看详情
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <h3 class="project-title">ZSC 斗地主（测试版）</h3>
+                            <div class="project-features">
+                                <ul class="feature-list">
+                                    <li>智能AI对手</li>
+                                    <li>完整的斗地主规则</li>
+                                    <li>叫分与出牌系统</li>
+                                    <li>胜利判定与提示</li>
+                                </ul>
+                            </div>
+                            <a href="https://zsc41888.github.io/doudizhu/" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> 体验项目
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 魔方模拟器项目 -->
+                <div class="project-card" data-category="games">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="project-icon">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                            <h3 class="project-title">ZSC魔方模拟器</h3>
+                            <p class="project-description">3D魔方模拟与求解器</p>
+                            <div class="btn btn-secondary">
+                                <i class="fas fa-rotate"></i> 翻转查看详情
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <h3 class="project-title">ZSC魔方模拟器</h3>
+                            <div class="project-features">
+                                <ul class="feature-list">
+                                    <li>3D魔方模拟</li>
+                                    <li>多种魔方类型</li>
+                                    <li>智能求解器</li>
+                                    <li>旋转操作与教程</li>
+                                </ul>
+                            </div>
+                            <a href="https://zsc41888.github.io/mofang" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> 体验项目
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 五子棋项目 -->
+                <div class="project-card" data-category="games">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="project-icon">
+                                <i class="fas fa-chess-board"></i>
+                            </div>
+                            <h3 class="project-title">ZSC 3D五子棋</h3>
+                            <p class="project-description">AI对战五子棋 - 挑战智能算法</p>
+                            <div class="btn btn-secondary">
+                                <i class="fas fa-rotate"></i> 翻转查看详情
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <h3 class="project-title">ZSC 3D五子棋</h3>
+                            <div class="project-features">
+                                <ul class="feature-list">
+                                    <li>智能AI对手</li>
+                                    <li>3D视觉效果</li>
+                                    <li>缩放与视角调整</li>
+                                    <li>胜负判定与提示系统</li>
+                                </ul>
+                            </div>
+                            <a href="https://zsc41888.github.io/zscqi/" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> 体验项目
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI助手项目 -->
+                <div class="project-card" data-category="tools">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="project-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3 class="project-title">ZSC AI助手</h3>
+                            <p class="project-description">智能AI助手 - 强大的对话与创作工具</p>
+                            <div class="btn btn-secondary">
+                                <i class="fas fa-rotate"></i> 翻转查看详情
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <h3 class="project-title">ZSC AI助手</h3>
+                            <div class="project-features">
+                                <ul class="feature-list">
+                                    <li>智能对话与问答系统</li>
+                                    <li>多种AI模型支持</li>
+                                    <li>无限免费使用</li>
+                                    <li>实时响应与多轮对话</li>
+                                </ul>
+                            </div>
+                            <a href="https://zsc41888.github.io/AI/" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> 体验项目
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 软件库项目 -->
+                <div class="project-card" data-category="tools">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="project-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <h3 class="project-title">ZSC 软件库</h3>
+                            <p class="project-description">高级专业UI，多主题自适应设计</p>
+                            <div class="btn btn-secondary">
+                                <i class="fas fa-rotate"></i> 翻转查看详情
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <h3 class="project-title">ZSC 软件库</h3>
+                            <div class="project-features">
+                                <ul class="feature-list">
+                                    <li>高级专业UI设计</li>
+                                    <li>自适应移动/PC设备</li>
+                                    <li>暗黑/亮色/霓虹主题切换</li>
+                                    <li>流畅动画与交互体验</li>
+                                </ul>
+                            </div>
+                            <a href="https://zsc41888.github.io/APK/" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> 体验项目
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 性能测试项目 -->
+                <div class="project-card" data-category="tools">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="project-icon">
+                                <i class="fas fa-mountain"></i>
+                            </div>
+                            <h3 class="project-title">ZSC 设备性能测试</h3>
+                            <p class="project-description">专业测试你的设备性能</p>
+                            <div class="btn btn-secondary">
+                                <i class="fas fa-rotate"></i> 翻转查看详情
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <h3 class="project-title">ZSC 设备性能测试</h3>
+                            <div class="project-features">
+                                <ul class="feature-list">
+                                    <li>手机性能差别点</li>
+                                    <li>除非你手机性能好</li>
+                                    <li>否则会很卡</li>
+                                </ul>
+                            </div>
+                            <a href="https://zsc41888.github.io/dumogu/" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> 体验项目
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 交流群项目 -->
+                <div class="project-card" data-category="community">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="project-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="project-title">ZSC科技交流群</h3>
+                            <p class="project-description">加入我们的社群，获取最新动态</p>
+                            <div class="btn btn-secondary">
+                                <i class="fas fa-rotate"></i> 翻转查看详情
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <h3 class="project-title">ZSC科技交流群</h3>
+                            <div class="project-features">
+                                <ul class="feature-list">
+                                    <li>与开发者直接交流</li>
+                                    <li>获取项目最新动态</li>
+                                    <li>技术问题讨论与解答</li>
+                                    <li>抢先体验新功能</li>
+                                </ul>
+                            </div>
+                            <button class="btn btn-primary" id="joinGroupBtn">
+                                <i class="fas fa-user-plus"></i> 加入QQ群
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 赞助支持按钮区域 -->
+    <section class="section" id="sponsor-link">
+        <div class="container">
+            <h2 class="section-title">赞助支持</h2>
+            <a href="https://zsc41888.github.io/VIPzanzhu" class="sponsor-btn" target="_blank">
+                <i class="fas fa-crown"></i> 前往赞助页面
+            </a>
+            <p style="margin-top: 20px; color: var(--text-secondary); font-size: 0.9rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                您的支持将帮助我们开发更多优质项目，感谢您对ZSC科技的支持！
+            </p>
+        </div>
+    </section>
+    
+    <!-- 关于我们区域 -->
+    <section class="section" id="about">
+        <div class="container">
+            <h2 class="section-title">关于ZSC科技</h2>
+            <div class="about">
+                <div class="about-content">
+                    <p class="about-text">ZSC科技工作室成立于2025年，专注于开发创新性的互动项目和应用。致力于将前沿技术与用户体验完美结合。</p>
+                    <p class="about-text">我们相信技术应该服务于人，通过创造性的解决方案，让复杂的技术变得简单易用，为人们的生活和工作带来便利与乐趣。</p>
+                    
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-number">5+</div>
+                            <div class="stat-label">项目上线</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">1000+</div>
+                            <div class="stat-label">用户访问</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">ZSC独自</div>
+                            <div class="stat-label">团队成员</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">ZSC<span>科技</span></div>
+                <div class="footer-links">
+                    <a href="#home" class="footer-link">首页</a>
+                    <a href="#projects" class="footer-link">项目展示</a>
+                    <a href="https://zsc41888.github.io/VIPzanzhu" class="footer-link" target="_blank">赞助支持</a>
+                    <a href="#about" class="footer-link">关于我们</a>
+                    <a href="#" class="footer-link" id="footerZscLink">ZSC科技</a>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-qq"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2025 ZSC科技工作室 | 所有项目禁止盗用! (加入QQ交流群:1070356813)</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- ZSC科技毛玻璃面板 -->
+    <div class="glass-panel" id="zscPanel">
+        <div class="glass-content">
+            <button class="glass-close" id="closeZscPanel">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="glass-title">ZSC科技</h2>
+            <p class="glass-text">ZSC科技是一家专注于前沿技术开发与创新的科技工作室，致力于将创意与技术完美结合，为用户提供卓越的数字体验。</p>
+            <p class="glass-text">我们的团队由经验丰富的开发者组成，专注于开发高质量、创新性的互动项目和应用，涵盖游戏、工具、社区等多个领域。</p>
+            
+            <div class="glass-features">
+                <div class="glass-feature">
+                    <i class="fas fa-lightbulb"></i>
+                    <h4>创新驱动</h4>
+                    <p>以创新为核心驱动力，不断探索技术边界</p>
+                </div>
+                <div class="glass-feature">
+                    <i class="fas fa-code"></i>
+                    <h4>技术卓越</h4>
+                    <p>追求代码质量与技术实现的完美结合</p>
+                </div>
+                <div class="glass-feature">
+                    <i class="fas fa-users"></i>
+                    <h4>用户至上</h4>
+                    <p>始终将用户体验放在首位，关注用户需求</p>
+                </div>
+                <div class="glass-feature">
+                    <i class="fas fa-rocket"></i>
+                    <h4>持续发展</h4>
+                    <p>不断迭代优化，追求长期可持续发展</p>
+                </div>
+            </div>
+            
+            <p class="glass-text">我们的使命是通过技术创新，让复杂的技术变得简单易用，为人们的生活和工作带来便利与乐趣。</p>
+            <p class="glass-text">如果您对我们的项目感兴趣，欢迎加入我们的交流群，与开发者直接交流，获取最新动态。</p>
+        </div>
+    </div>
+    
+    <!-- QQ群模态框 -->
+    <div class="modal" id="groupModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 2000; justify-content: center; align-items: center;">
+        <div style="background: rgba(30, 30, 46, 0.8); padding: 30px; border-radius: 16px; max-width: 400px; width: 90%; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);">
+            <h3 style="margin-bottom: 15px; color: var(--accent-color);">加入ZSC科技交流群</h3>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">群号已复制到剪贴板！</p>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <p style="font-size: 1.2rem; font-weight: bold; color: var(--accent-color);">1070356813</p>
+            </div>
+            <p style="margin-bottom: 20px; color: var(--text-secondary); font-size: 0.9rem;">请打开QQ，粘贴群号并申请加入</p>
+            <button id="closeModalBtn" style="background: var(--accent-color); color: var(--primary-bg); border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: 600; transition: var(--transition-fast);">确定</button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 入场动画
+            const entryAnimation = document.getElementById('entryAnimation');
+            const progressBar = document.getElementById('progressBar');
+            const skipBtn = document.getElementById('skipBtn');
+            const navbar = document.getElementById('navbar');
+            const hero = document.getElementById('home');
+            const projects = document.getElementById('projects');
+            const sponsorLink = document.getElementById('sponsor-link');
+            const about = document.getElementById('about');
+            const footer = document.querySelector('footer');
+            const body = document.body;
+            
+            // 显示主页面函数
+            function showMainPage() {
+                entryAnimation.classList.add('hidden');
+                body.classList.remove('no-scroll'); // 移除no-scroll类，允许滚动
+                navbar.classList.add('visible');
+                hero.classList.add('visible');
+                
+                // 滚动时显示其他部分
+                window.addEventListener('scroll', function() {
+                    const scrollPosition = window.scrollY + window.innerHeight;
+                    
+                    if (scrollPosition > projects.offsetTop + 100) {
+                        projects.classList.add('visible');
+                    }
+                    
+                    if (scrollPosition > sponsorLink.offsetTop + 100) {
+                        sponsorLink.classList.add('visible');
+                    }
+                    
+                    if (scrollPosition > about.offsetTop + 100) {
+                        about.classList.add('visible');
+                    }
+                    
+                    if (scrollPosition > footer.offsetTop + 100) {
+                        footer.classList.add('visible');
+                    }
+                });
+                
+                // 触发一次滚动事件以检查初始位置
+                window.dispatchEvent(new Event('scroll'));
+                
+                // 确保滚动条正常工作
+                setTimeout(() => {
+                    window.scrollTo(0, 0);
+                }, 100);
+            }
+            
+            // 模拟加载进度
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                    
+                    // 进度完成后，显示主页面
+                    setTimeout(() => {
+                        showMainPage();
+                    }, 500);
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 100);
+            
+            // 跳过按钮
+            skipBtn.addEventListener('click', function() {
+                clearInterval(progressInterval);
+                showMainPage();
+            });
+            
+            // 导航栏切换
+            const navToggle = document.getElementById('navToggle');
+            const navLinks = document.getElementById('navLinks');
+            
+            navToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                navToggle.innerHTML = navLinks.classList.contains('active') ? 
+                    '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        if (navLinks.classList.contains('active')) {
+                            navLinks.classList.remove('active');
+                            navToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                        }
+                        
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // 项目分类筛选
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            const projectCards = document.querySelectorAll('.project-card');
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    projectCards.forEach(card => {
+                        if (category === 'all' || card.getAttribute('data-category') === category) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // ZSC科技面板功能
+            const zscLink = document.getElementById('zscLink');
+            const footerZscLink = document.getElementById('footerZscLink');
+            const zscPanel = document.getElementById('zscPanel');
+            const closeZscPanel = document.getElementById('closeZscPanel');
+            
+            function openZscPanel() {
+                zscPanel.classList.add('active');
+                body.style.overflow = 'hidden';
+            }
+            
+            function closeZscPanelFunc() {
+                zscPanel.classList.remove('active');
+                body.style.overflow = 'auto';
+            }
+            
+            zscLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                openZscPanel();
+            });
+            
+            footerZscLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                openZscPanel();
+            });
+            
+            closeZscPanel.addEventListener('click', closeZscPanelFunc);
+            
+            zscPanel.addEventListener('click', (e) => {
+                if (e.target === zscPanel) {
+                    closeZscPanelFunc();
+                }
+            });
+            
+            // QQ群功能
+            const joinGroupBtn = document.getElementById('joinGroupBtn');
+            const groupModal = document.getElementById('groupModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            
+            joinGroupBtn.addEventListener('click', function() {
+                const groupNumber = '1070356813';
+                navigator.clipboard.writeText(groupNumber).then(() => {
+                    groupModal.style.display = 'flex';
+                }).catch(() => {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = groupNumber;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    groupModal.style.display = 'flex';
+                });
+            });
+            
+            closeModalBtn.addEventListener('click', () => groupModal.style.display = 'none');
+            groupModal.addEventListener('click', (e) => {
+                if (e.target === groupModal) {
+                    groupModal.style.display = 'none';
+                }
+            });
+            
+            // 滚动动画
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // 为元素添加初始样式和观察
+            document.querySelectorAll('.project-card, .about, .section-title, #sponsor-link .sponsor-btn').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+            
+            // 导航栏滚动效果
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.style.background = 'rgba(10, 10, 18, 0.3)';
+                    navbar.style.padding = '1rem 5%';
+                } else {
+                    navbar.style.background = 'rgba(10, 10, 18, 0.3)';
+                    navbar.style.padding = '1.5rem 5%';
+                }
+            });
+            
+            // 确保入场动画完全隐藏后，页面可以正常交互
+            entryAnimation.addEventListener('transitionend', function() {
+                if (this.classList.contains('hidden')) {
+                    // 确保入场动画完全隐藏，不影响页面交互
+                    this.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
